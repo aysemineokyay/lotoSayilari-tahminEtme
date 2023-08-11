@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loto Sayılarını Tahmin Etme</title>
+    <style>
+         body{
+            margin: 50px 50px 0 50px;
+          }
+        input{
+            width: 100px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Sayısal Loto Oyunu</h2>
+    <p>Aşağıdaki inputlara tahminlerini giriniz; </p>
+    <input id="tahmin1" name="tahmin1" type="number" onblur="degerKontrolu(event)" class="tahmin" autofocus/>
+    <input id="tahmin2" name="tahmin2"type="number" onblur="degerKontrolu(event)" class="tahmin" autofocus/>
+    <input id="tahmin3" name="tahmin3" type="number" onblur="degerKontrolu(event)" class="tahmin" autofocus/>
+    <input id="tahmin4" name="tahmin4" type="number" onblur="degerKontrolu(event)" class="tahmin" autofocus/>
+    <input id="tahmin5" name="tahmin5" type="number" onblur="degerKontrolu(event)" class="tahmin" autofocus/>
+    <input id="tahmin6" name="tahmin6" type="number" onblur="degerKontrolu(event)" class="tahmin" autofocus/>
+    <button id="tahminButton" onclick="tahminGir()">Tahmin gir</button><br><br>
+    <p id="dogruGiris"></p>
+<hr>
+<br>
+<button id="kuraButton" onclick="kuraCek()" disabled>Kurayı Çek</button><br>
+<p>Loto Sayıları</p>
+<input type="number" id="kura1" disabled>
+<input type="number" id="kura2" disabled>
+<input type="number" id="kura3" disabled>
+<input type="number" id="kura4" disabled>
+<input type="number" id="kura5" disabled>
+<input type="number" id="kura6" disabled><br><br>
+<label id="bilinenSayilar"></label><br>
+<label id="bilinenSayiAdediSonuc"></label>
+
+<script>
+         var tahminNumaralari=[];
+         var kuraNumaralari=[];
+         let tahmin= document.getElementById("tahminButton");
+         let kura= document.getElementById("kuraButton");
+         let dogruGiris= document.getElementById("dogruGiris");
+         let dizi=[];
+   
+    function degerKontrolu(e){
+             e.preventDefault();
+             let input=e.target;
+             let value=input.value;
+             if(dizi.includes(value) && value!==""){
+                  alert("Aynı tahmin bir kez girilebilir.");   
+                  e.target.focus();               
+                  return e.target.value="";
+                 }
+             else{
+                  dizi.push(value);
+                }                   
+    }      
+    function tahminGir(){    
+        let textElements = document.querySelectorAll("input[class=tahmin]");
+        textElements.forEach((element) => {
+            if( element.value===""){
+              tahminNumaralari.push("");
+            }
+            else{
+
+                tahminNumaralari.push(Number(element.value));
+            }
+        
+        });
+        function gecerliSayi(x) {
+            if( 0<x && x<50 ){
+
+                return true;
+            }
+            else{
+
+                return false;
+            }
+        }
+        const bos=tahminNumaralari.some((x)=> x==="");
+        const gecerli=tahminNumaralari.every(gecerliSayi);
+        if(bos){
+         
+        alert("Tahmin boş geçilemez.");      
+        return tahminNumaralari=[];
+        }
+        else if(!gecerli){
+       
+         alert("1-49 sayıları arasında bir sayı girmelisiniz!");
+         return tahminNumaralari=[];
+        }
+        else{
+            tahmin.disabled=true;
+            kura.disabled=false;
+            dogruGiris.innerHTML="Tahminler girildi.";    
+            tahminNumaralari.sort((a,b)=>a-b);          
+            document.getElementById("tahmin1").value=tahminNumaralari[0];
+            document.getElementById("tahmin2").value=tahminNumaralari[1];
+            document.getElementById("tahmin3").value=tahminNumaralari[2];
+            document.getElementById("tahmin4").value=tahminNumaralari[3];
+            document.getElementById("tahmin5").value=tahminNumaralari[4];
+            document.getElementById("tahmin6").value=tahminNumaralari[5];
+        }
+
+    }
+    function kuraCek(){
+        let i=0;
+        const min=1;
+        const max=49;
+        const sayiAdedi=6;
+        kuraNumaralari=[];
+        document.getElementById("kura1").value="";
+        document.getElementById("kura2").value="";
+        document.getElementById("kura3").value="";
+        document.getElementById("kura4").value="";
+        document.getElementById("kura5").value="";
+        document.getElementById("kura6").value="";
+        while(i<=sayiAdedi){
+            let random=Math.random();
+            random=Math.floor(random*(max-min+1)+min);
+            if(kuraNumaralari.includes(random)){
+                continue;
+            }
+            kuraNumaralari.push(random);
+            i++;
+        }
+            kuraNumaralari.sort((a,b)=>a-b);
+            document.getElementById("kura1").value=kuraNumaralari[0];
+            document.getElementById("kura2").value=kuraNumaralari[1];
+            document.getElementById("kura3").value=kuraNumaralari[2];
+            document.getElementById("kura4").value=kuraNumaralari[3];
+            document.getElementById("kura5").value=kuraNumaralari[4];
+            document.getElementById("kura6").value=kuraNumaralari[5];
+            karsilastir();
+    }
+    function karsilastir(){
+        let bilinenSayiAdedi=0;
+        let bilinenDizi=[];
+        let bilinenSayilar=document.getElementById("bilinenSayilar");
+        let bilinenSayiAdediSonuc=document.getElementById("bilinenSayiAdediSonuc");
+
+            for(let i=0; i<tahminNumaralari.length; i++){
+                const tahminNumarasi=tahminNumaralari[i];
+                if(kuraNumaralari.includes(tahminNumarasi)){
+                    bilinenDizi.push(tahminNumarasi);
+                    bilinenSayiAdedi++;
+                }
+            }
+            if(bilinenSayiAdedi!=0){
+
+                bilinenSayilar.innerHTML="Bilinen sayılar : " +bilinenDizi.join(" - ");
+                bilinenSayiAdediSonuc.innerHTML=bilinenSayiAdedi + " adet sayı bildiniz.";
+            }
+            else{
+                bilinenSayilar.innerHTML="Üzgünüm sayı bilemediniz.";
+                bilinenSayiAdediSonuc.innerHTML="";
+            }
+           
+    }
+</script>
+</body>
+</html>
